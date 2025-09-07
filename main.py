@@ -1,23 +1,36 @@
 import random
 
+# Simple map of accounts, think of this as the database
+bank_accounts = {}
+
 class Bank_account:
+
+    # Constructor
     def __init__(self, number, owner, balance):
         self.number = number
         self.owner = owner
         self.balance = balance
     
-    def deposit(self):
-        deposit_amount = input("How much are you depositing: ")
-        self.balance += deposit_amount
+    def deposit(self, amount):
+        self.balance += amount
+    
+    def check_balance(self):
+        return self.balance
 
 def start():
     print("Welcome to The Dani Bank")
     print("what would you like to do?")
     print("a. create account b. access account")
     user_input = input("Option Selection: ")
+    account = None
 
     if user_input == "a":
-        create_account()
+        account = create_account()
+    elif user_input == "b":
+        account_name = input("Account Owner: ")
+        account = get_account(account_name)
+
+    return account
 
 def create_account():
     number = random.randint(100,200)
@@ -26,8 +39,49 @@ def create_account():
     print("New account Number: " + str(number))
     print("Account Holder " + str(owner))
     print("would you like to make a deposit? ")
+    initial_deposit = 0
     make_deposit = input("type y or n: ")
+
+    if make_deposit == "y":
+        initial_deposit = int(input("How much: "))
+
+    new_account = Bank_account(number, owner, initial_deposit)
+
+    add_account(owner, new_account)
+    
+    return new_account
+
+def add_account(key, value):
+    # Key is owner/name, value is the actual Bank_account Object
+    bank_accounts[key] = value
+
+def get_account(key):
+    # Key is the owner/name. Bad implementation of a unique key but just an example
+    return bank_accounts[key]
 
 
 if __name__ == "__main__":
-    start()
+    # Create accounts A and B when you hit play, then access 1 of them in C to go through the example
+
+    accountA = start()
+    print("Adding 50 to Account A")
+    accountA.deposit(50)
+    print("New Balance for Account A: " + str(accountA.check_balance()))
+
+    accountB = start()
+    print("Adding 25 to Account B")
+    accountB.deposit(50)
+    print("New Balance for Account B: " + str(accountB.check_balance()))
+
+    print("Who has accounts in Dani's Bank and how much")
+    for key, value in bank_accounts.items():
+        print(key + " - " + str(value.check_balance()))
+
+    # Access 1 of the accounts created (not a new object but a reference to an existing one)
+    accountC = start()
+    print("Checking balance for: " + accountC.owner + " - " + str(accountC.check_balance()))
+
+
+    # Test deposits for now until you understand working with objects
+    # but you can make all this interactive/loop after
+    
