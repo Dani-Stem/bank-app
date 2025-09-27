@@ -1,11 +1,9 @@
 import random
 
-# Simple map of accounts, think of this as the database
 bank_accounts = {}
 
 class Bank_account:
 
-    # Constructor
     def __init__(self, number, owner, balance):
         self.number = number
         self.owner = owner
@@ -55,32 +53,30 @@ def create_account():
     return new_account
 
 def add_account(key, value):
-    # Key is owner/name, value is the actual Bank_account Object
     bank_accounts[key] = value
 
 def get_account(key):
-    # Key is the owner/name. Bad implementation of a unique key but just an example
     return bank_accounts[key]
 
 
+
 if __name__ == "__main__":
-    # Create accounts A and B when you hit play, then access 1 of them in C to go through the example
+  
+    while True:
+        i = start()
+        print("New Balance for Account " + i.owner + ":" + str(i.check_balance()))  
 
-    accountA = start()
-    print("New Balance for Account A: " + str(accountA.check_balance()))
+    # accountA = start()
+    # print("New Balance for Account A: " + str(accountA.check_balance()))
 
-    accountB = start()
-    print("New Balance for Account B: " + str(accountB.check_balance()))
+    # accountB = start()
+    # print("New Balance for Account B: " + str(accountB.check_balance()))
+
+    # accountC = start()
+    # print("Checking balance for: " + accountC.owner + " - " + str(accountC.check_balance()))
 
     print("Who has accounts in Dani's Bank and how much")
     for key, value in bank_accounts.items():
         print(key + " - " + str(value.check_balance()))
 
-    # Access 1 of the accounts created (not a new object but a reference to an existing one)
-    accountC = start()
-    print("Checking balance for: " + accountC.owner + " - " + str(accountC.check_balance()))
-
-
-    # Test deposits for now until you understand working with objects
-    # but you can make all this interactive/loop after
     
