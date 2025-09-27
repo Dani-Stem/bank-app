@@ -37,13 +37,16 @@ def create_account():
     owner = input("Please Provide your full name: ")
 
     print("New account Number: " + str(number))
-    print("Account Holder " + str(owner))
+    print("Account Holder: " + str(owner))
     print("would you like to make a deposit? ")
     initial_deposit = 0
     make_deposit = input("type y or n: ")
 
     if make_deposit == "y":
         initial_deposit = int(input("How much: "))
+    else:
+        print("okay, Goodbye.")
+        exit()
 
     new_account = Bank_account(number, owner, initial_deposit)
 
