@@ -64,13 +64,9 @@ if __name__ == "__main__":
     # Create accounts A and B when you hit play, then access 1 of them in C to go through the example
 
     accountA = start()
-    print("Adding 50 to Account A")
-    accountA.deposit(50)
     print("New Balance for Account A: " + str(accountA.check_balance()))
 
     accountB = start()
-    print("Adding 25 to Account B")
-    accountB.deposit(50)
     print("New Balance for Account B: " + str(accountB.check_balance()))
 
     print("Who has accounts in Dani's Bank and how much")
