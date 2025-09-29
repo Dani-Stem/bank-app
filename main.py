@@ -1,82 +1,81 @@
 import random
+import time
 
-bank_accounts = {}
+class Bank:
+    def __init__(self, key, account_num, account_holder, account_balance):
+        self.key = key
+        self.account_num = account_num
+        self.account_holder = account_holder
+        self.account_balance = account_balance
 
-class Bank_account:
+    def start(self):
+        print("Welcome to Dani Bank")
+        print("The Best Bank in the world")
+        print("Please enter Account Holder Name or Number to continue")
+        print("If you do not have an account press 0 to create one: ")
+        user_input = input()
 
-    def __init__(self, number, owner, balance):
-        self.number = number
-        self.owner = owner
-        self.balance = balance
-    
-    def deposit(self, amount):
-        self.balance += amount
-    
-    def check_balance(self):
-        return self.balance
+        if user_input == "0":
+            self.create_account()
 
-def start():
-    print("Welcome to The Dani Bank")
-    print("what would you like to do?")
-    print("a. create account b. access account")
-    user_input = input("Option Selection: ")
-    account = None
+    def create_account(self):
+        print("Thank you for choosing Dani Bank")
+        print("Please enter your name below: ")
+        
+        self.account_holder = input()
+        self.account_num = random.randint(1000, 2000)
+        self.key += 1
+        self.account_balance = 1000
 
-    if user_input == "a":
-        account = create_account()
-    elif user_input == "b":
-        account_name = input("Account Owner: ")
-        account = get_account(account_name)
+        print("Hello " + self.account_holder + "!")
+        print("Your new account number is: " + self.account_num)
+        print("Your current account balance is: " + self.account_balance)
 
-    return account
+        print("would you like to make a deposit?")
+        user_input = input("type y or n: ")
 
-def create_account():
-    number = random.randint(100,200)
-    owner = input("Please Provide your full name: ")
+        if user_input == "n":
+            print("Okay, Thanks for choosing Dani Bank")
+            print("I love you, Goodbye")
+            exit()
+        else:
+            self.deposit()
 
-    print("New account Number: " + str(number))
-    print("Account Holder: " + str(owner))
-    print("would you like to make a deposit? ")
-    initial_deposit = 0
-    make_deposit = input("type y or n: ")
+    def deposit(self):
 
-    if make_deposit == "y":
-        initial_deposit = int(input("How much: "))
-    else:
-        print("okay, Goodbye.")
-        exit()
+        user_input = input("Please enter deposit amount: ")
+        self.account_balance += user_input
+        print("Your new balance is: " + self.account_balance)
+        time.sleep(2)
+        self.menu()
 
-    new_account = Bank_account(number, owner, initial_deposit)
+    def withdraw(self):
 
-    add_account(owner, new_account)
-    
-    return new_account
+        user_input = input("Please enter withdraw amount: ")
+        self.account_balance -= user_input
+        print("Your new balance is: " + self.account_balance)
+        time.sleep(2)
+        self.menu()
 
-def add_account(key, value):
-    bank_accounts[key] = value
+    def menu(self):
 
-def get_account(key):
-    return bank_accounts[key]
+        print("Hello " + self.account_holder + "!")
+        print("Account number: " + self.account_num)
+        print("Account balance: " + self.account_balance)
 
+        print("would you like to make a deposit or withdraw?")
+        user_input = input("Type d for deposite or w for withdraw: ")
 
+        if user_input == "d":
+            self.deposit()
+        elif user_input == "w":
+            self.withdraw()
+        else: 
+            print("Entry not recognized.")
+            print("Please try again")
+            print("...")
+            time.sleep(2)
+            self.menu()
 
-if __name__ == "__main__":
-  
-    while True:
-        i = start()
-        print("New Balance for Account " + i.owner + ":" + str(i.check_balance()))  
-
-    # accountA = start()
-    # print("New Balance for Account A: " + str(accountA.check_balance()))
-
-    # accountB = start()
-    # print("New Balance for Account B: " + str(accountB.check_balance()))
-
-    # accountC = start()
-    # print("Checking balance for: " + accountC.owner + " - " + str(accountC.check_balance()))
-
-    print("Who has accounts in Dani's Bank and how much")
-    for key, value in bank_accounts.items():
-        print(key + " - " + str(value.check_balance()))
-
-    
+    if __name__ == "__mane__":
+        start()
