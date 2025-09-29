@@ -43,7 +43,7 @@ def create_account(self):
     else:
         self.deposit()
 
-    new_account = Bank(self.account_num, self.account_holder, self.account_balance)
+    new_account = Bank(self.key, self.account_num, self.account_holder, self.account_balance)
     self.add_account(self.account_holder, new_account)
     return new_account
 
