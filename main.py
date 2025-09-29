@@ -77,5 +77,5 @@ class Bank:
             time.sleep(2)
             self.menu()
 
-    if __name__ == "__mane__":
+    if __name__ == "__main__":
         start()
