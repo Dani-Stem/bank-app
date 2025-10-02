@@ -4,8 +4,7 @@ import time
 bank_accounts = {}
 
 class Bank:
-    def __init__(self, key, account_num, account_holder, account_balance):
-        self.key = key
+    def __init__(self, account_num, account_holder, account_balance):
         self.account_num = account_num
         self.account_holder = account_holder
         self.account_balance = account_balance
@@ -14,16 +13,16 @@ class Bank:
     def menu(self):
 
         print("Hello " + self.account_holder + "!")
-        print("Account number: " + self.account_num)
-        print("Account balance: " + self.account_balance)
+        print("Account number: " + str(self.account_num))
+        print("Account balance: " + str(self.account_balance))
 
         print("would you like to make a deposit or withdraw?")
         user_input = input("Type d for deposite or w for withdraw: ")
 
         if user_input == "d":
-            deposit()
+            self.deposit()
         elif user_input == "w":
-            withdraw()
+            self.withdraw()
         else: 
             print("Entry not recognized.")
             print("Please try again")
@@ -31,21 +30,21 @@ class Bank:
             time.sleep(2)
             self.menu()
 
-    def deposit():
+    def deposit(self):
 
         user_input = int(input("Please enter deposit amount: "))
-        account_balance += user_input
-        print("Your new balance is: " + account_balance)
+        self.account_balance += user_input
+        print("Your new balance is: " + str(self.account_balance))
         time.sleep(2)
-        menu()
+        self.menu()
 
-    def withdraw():
+    def withdraw(self):
 
         user_input = int(input("Please enter withdraw amount: "))
-        account_balance -= user_input
-        print("Your new balance is: " + account_balance)
+        self.account_balance -= user_input
+        print("Your new balance is: " + str(self.account_balance))
         time.sleep(2)
-        menu()
+        self.menu()
 
 def create_account():
     print("Thank you for choosing Dani Bank")
@@ -53,23 +52,27 @@ def create_account():
     
     account_holder = input()
     account_num = random.randint(1000, 2000)
-    key += 1
     account_balance = 1000
 
-    print("Hello " + account_holder + "!")
-    print("Your new account number is: " + account_num)
-    print("Your current account balance is: " + account_balance)
+    print("Hello " + str(account_holder) + "!")
+    print("Your new account number is: " + str(account_num))
+    print("Your current account balance is: " + str(account_balance))
 
     print("would you like to make a deposit?")
     user_input = input("type y or n: ")
+
+    new_account = Bank(account_num, account_holder, account_balance)
+    add_account(account_holder, new_account)
 
     if user_input == "n":
         print("Okay, Thanks for choosing Dani Bank")
         print("I love you, Goodbye")
         exit()
     else:
-        deposit()
+        new_account.deposit()
 
+
+    return new_account
 
 def start():
     print("Welcome to Dani Bank")
@@ -81,9 +84,6 @@ def start():
     if user_input == "0":
         create_account()
 
-    new_account = Bank(key, account_num, account_holder, account_balance)
-    add_account(account_holder, new_account)
-    return new_account
 
 def add_account(key, value):
     bank_accounts[key] = value
