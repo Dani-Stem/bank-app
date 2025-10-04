@@ -1,7 +1,7 @@
 import random
-import tkinter as tk
-from tkinter import *
+import FreeSimpleGUI as sg
 
+sg.theme('DarkAmber')
 
 # The Bank class uses this Account class to create and access an account
 class Account:
@@ -35,16 +35,31 @@ class Bank:
 
     def main(self):
 
-        
-        print("Welcome to The Dani Bank")
-        print("What would you like to do?")
-        print("a. Create account   b. Access account   c. Exit")
-
-        user_input = input("Option Selection: ")
-
-        # This loop runs forever until we "break"(stop the while loop)
-        # It's used to keep asking the user until they enter a valid option
         while True:
+
+
+                
+            sg.theme('DarkAmber')
+            layout = [  [sg.Text("Welcome to The Dani Bank")],
+                        [sg.Text("What would you like to do?")],
+                        [sg.Button("Create account"), sg.Button("Access account"), sg.Exit()]]
+
+            # Create the Window
+            window = sg.Window('Window Title', layout)
+            # Event Loop to process "events"
+            while True:
+                event, values = window.read()
+                if event in (sg.WIN_CLOSED, 'Exit'):
+                    break
+
+                if event in (sg.WIN_CLOSED, 'Create account'):
+                    
+                    user_input = "a"
+                    
+                if event in (sg.WIN_CLOSED, 'Access account'):
+                    
+                    user_input = "b"
+
             if user_input == "a":
                 if self.account is None:
                     # If no account exists, allow user to create one
@@ -85,6 +100,8 @@ class Bank:
                 # If the user enters something that's not a, b, or c
                 print("Invalid option. Please try again.")
                 user_input = input("Option Selection: ")
+        
+            window.close()
 
                 
 
@@ -179,24 +196,5 @@ class Bank:
     def exit(self):
         print("Thank you for banking with us. Goodbye!")
         quit()
-
-
-
-master = Tk()
-
-def option_a():
-    user_imput = "a"
-    return user_imput
-
-def option_b():
-    user_imput = "b"
-    return user_imput
-
-Label(master, text='Welcome to The Dani Bank').grid(row=1)
-Label(master, text='What would you like to do?').grid(row=2)
-button = tk.Button(master, text='Create account', width=25, command=option_a).grid(row=3)
-button = tk.Button(master, text='Access account', width=25, command=option_b).grid(row=3, column=1)
-button = tk.Button(master, text='Exit', width=25, command=master.destroy).grid(row=3, column=2)
-mainloop()
 
 start = Bank()
