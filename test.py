@@ -1,20 +1,17 @@
+import FreeSimpleGUI as sg
 
-import tkinter as tk
-from tkinter import *
+sg.theme('DarkAmber')   # Add a little color to your windows
+# All the stuff inside your window. This is the PSG magic code compactor...
+layout = [  [sg.Text("Welcome to The Dani Bank")],
+            [sg.Text("What would you like to do?")],
+            [sg.Button("Create account"), sg.Button("Access account"), sg.Cancel("Exit")]]
 
-master = Tk()
+# Create the Window
+window = sg.Window('Window Title', layout)
+# Event Loop to process "events"
+while True:
+    event, values = window.read()
+    if event in (sg.WIN_CLOSED, 'Cancel'):
+        break
 
-def option_a():
-    user_imput = "a"
-    return user_imput
-
-def option_b():
-    user_imput = "b"
-    return user_imput
-
-Label(master, text='Welcome to The Dani Bank').grid(row=1)
-Label(master, text='What would you like to do?').grid(row=2)
-button = tk.Button(master, text='Create account', width=25, command=master.destroy).grid(row=3)
-button = tk.Button(master, text='Access account', width=25, command=test).grid(row=3, column=1)
-button = tk.Button(master, text='Exit', width=25, command=master.destroy).grid(row=3, column=2)
-mainloop()
+window.close()
