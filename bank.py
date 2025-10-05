@@ -37,8 +37,6 @@ class Bank:
 
         while True:
 
-
-                
             sg.theme('DarkAmber')
             layout = [  [sg.Text("Welcome to The Dani Bank")],
                         [sg.Text("What would you like to do?")],
@@ -52,84 +50,96 @@ class Bank:
                 if event in (sg.WIN_CLOSED, 'Exit'):
                     break
 
-                if event in (sg.WIN_CLOSED, 'Create account'):
+                elif event in (sg.WIN_CLOSED, 'Create account'):
                     
-                    user_input = "a"
-                    
-                if event in (sg.WIN_CLOSED, 'Access account'):
-                    
-                    user_input = "b"
+                    window.close()
 
-            if user_input == "a":
-                if self.account is None:
-                    # If no account exists, allow user to create one
-                    self.create_account()
-                    break
-                else:
-                    # If an account already exists, this prevents creation of another
-                    print("Account already exists")
-                    user_input = input("Would you like to access your account? (y/n): ")
-                    if user_input == "y":
-                        self.access_account()
-                        break
-                    else:
-                        self.main()
-                        break
+                    if self.account is None:
 
-            elif user_input == "b":
-                # If user tries to access account without one existing
-                if self.account is None:
-                    print("No account found. Please create an account first.")
-                    user_input = input("Would you like to create an account? (y/n): ")
-                    if user_input == "y":
+                        # If no account exists, allow user to create one
                         self.create_account()
                         break
+                    # else:
+                    #     # If an account already exists, this prevents creation of another
+                    #     print("Account already exists")
+                    #     user_input = input("Would you like to access your account? (y/n): ")
+                    #     if user_input == "y":
+                    #         self.access_account()
+                    #         break
+                    #     else:
+                    #         self.main()
+                    #         break
+                    
+                elif event in (sg.WIN_CLOSED, 'Access account'):
+                    
+                    if self.account is None:
+                        print("No account found. Please create an account first.")
+                        user_input = input("Would you like to create an account? (y/n): ")
+                        if user_input == "y":
+                            self.create_account()
+                            break
+                        else: 
+                            self.main()
+                            break
                     else:
-                        self.main()
+                        self.access_account()
                         break
-                else:
-                    # If an account exists, this allows user to access it
-                    self.access_account()
-                    break
+           
+    def create_account(self):
 
-            elif user_input == "c":
-                self.exit()  # Calls the exit method/function and quits the program
-                break
+        self.number = random.randint(1000, 2000)
 
-            else:
-                # If the user enters something that's not a, b, or c
-                print("Invalid option. Please try again.")
-                user_input = input("Option Selection: ")
-        
+        sg.theme('DarkAmber')
+        layout = [[sg.Text("Please provide your full name: ")],
+                [sg.InputText()],
+                [sg.Button('Enter'), sg.Button('Cancel')] ]
+
+        window = sg.Window('Window Title', layout)
+
+        event, values = window.read()
+
+        if event in (sg.WIN_CLOSED, 'Enter'):
+            self.owner = sg.InputText
             window.close()
 
-                
+            self.account = Account(self.number, self.owner)
 
-    def create_account(self):
-        self.number = random.randint(1000, 2000)
-        self.owner = input("Please provide your full name: ")
+            sg.theme('DarkAmber')
+            layout = [[sg.Text("New account number: " + str(self.number))],
+                    [sg.Text("Account holder: " + str(self.owner))],
+                    [sg.Text("Would you like to make a deposit?")],
+                    [sg.Button('Yes'), sg.Button('No')] ]
 
-        # Creates a new account using the Account class
-        self.account = Account(self.number, self.owner)
+            window = sg.Window('Window Title', layout)
 
-        print("New account number: " + str(self.number))
-        print("Account holder: " + self.owner)
-        print("Would you like to make a deposit?")
+            event, values = window.read()
 
-        decision = input("Type y or n: ")
+            while True:
+                if event in (sg.WIN_CLOSED, 'Yes'):
+                        self.deposit()
+                elif event in (sg.WIN_CLOSED, 'No'):
+                    print("Thank you for creating an account with us.")
+                    self.main()
+                    break
 
-        # This loop keeps running until the user enters a valid response (y or n)
-        while True:
-            if decision == "y":
-                self.deposit()
-                break
-            elif decision == "n":
-                print("Thank you for creating an account with us.")
-                self.main()
-                break
-            else:
-                print("Invalid option. Please try again.")
-                decision = input("Please type y or n: ")
+            # print("New account number: " + str(self.number))
+            # print("Account holder: " + str(self.owner))
+            # print("Would you like to make a deposit?")
+
+            # decision = input("Type y or n: ")
+
+            # This loop keeps running until the user enters a valid response (y or n)
+            # while True:
+            #     if decision == "y":
+            #         self.deposit()
+            #         break
+            #     elif decision == "n":
+            #         print("Thank you for creating an account with us.")
+            #         self.main()
+            #         break
+            #     else:
+            #         print("Invalid option. Please try again.")
+            #         decision = input("Please type y or n: ")
 
     def access_account(self):
         # Accesses the owner variable from the Account class
