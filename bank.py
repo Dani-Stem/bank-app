@@ -118,9 +118,19 @@ class Bank:
                 if event in (sg.WIN_CLOSED, 'Yes'):
                         self.deposit()
                 elif event in (sg.WIN_CLOSED, 'No'):
-                    print("Thank you for creating an account with us.")
-                    self.main()
-                    break
+                    
+                    sg.theme('DarkAmber')
+                    layout = [[sg.Text("Thank you for creating an account with us.")],
+                            [sg.Button('Exit')]]
+
+                    window = sg.Window('Window Title', layout)
+
+                    event, values = window.read()
+
+                    if event in (sg.WIN_CLOSED, 'Exit'):
+                        window.close()
+                        self.main()
+                        quit()
 
             # print("New account number: " + str(self.number))
             # print("Account holder: " + str(self.owner))
@@ -179,20 +189,52 @@ class Bank:
                 user_input = input("a. deposit   b. withdraw   c. back: ")
 
     def deposit(self):
-        deposit_amount = input("How much are you depositing: ")
+        sg.theme('DarkAmber')
+        layout = [[sg.Text("How much are you depositing: ")],
+                [sg.InputText()],
+                [sg.Button('Enter'), sg.Button('Cancel')] ]
+
+        window = sg.Window('Window Title', layout)
+
+        event, values = window.read()
+
+        deposit_amount = values[0]
+        window.close()
 
         # Tries to convert the input to a float (a float is a number with decimals)
         try:
             amount = float(deposit_amount)
         # If the input is not a number, show error and try again
         except ValueError:
-            print("Invalid input. Please enter a number.")
-            self.deposit()
+                    sg.theme('DarkAmber')
+                    layout = [[sg.Text("Invalid input. Please enter a number.")],
+                            [sg.Button('Ok')]]
+
+                    window = sg.Window('Window Title', layout)
+
+                    event, values = window.read()
+
+                    if event in (sg.WIN_CLOSED, 'Ok'):
+                        window.close()
+                        self.main()
+                        self.deposit()
+                        # break
 
         # Doesn't allow negative or zero deposits
         if amount <= 0:
-            print("Invalid amount. Please enter a positive number.")
-            self.deposit()
+            sg.theme('DarkAmber')
+            layout = [[sg.Text("Invalid amount. Please enter a positive number.")],
+                    [sg.Button('Ok')]]
+
+            window = sg.Window('Window Title', layout)
+
+            event, values = window.read()
+
+            if event in (sg.WIN_CLOSED, 'Ok'):
+                window.close()
+                self.main()
+                self.deposit()
+                # break
 
         # Deposit using the Account class's method/function
         self.account.deposit(amount)
@@ -204,7 +246,19 @@ class Bank:
         self.main()
 
     def exit(self):
-        print("Thank you for banking with us. Goodbye!")
-        quit()
+                    
+        sg.theme('DarkAmber')
+        layout = [[sg.Text("Thank you for banking with us. Goodbye!")],
+                [sg.Button('Exit')]]
+
+        window = sg.Window('Window Title', layout)
+
+        event, values = window.read()
+
+        if event in (sg.WIN_CLOSED, 'Exit'):
+            window.close()
+            self.main()
+            quit()
+
 
 start = Bank()
