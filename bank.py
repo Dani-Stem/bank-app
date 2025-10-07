@@ -245,8 +245,8 @@ class Bank:
         event, values = window.read()
 
         if event in (sg.WIN_CLOSED, 'Exit'):
-            window.close()
             self.exit()
+            window.close()
             # self.main()
             # self.deposit()
             # break
