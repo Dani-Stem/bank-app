@@ -37,7 +37,6 @@ class Bank:
 
         while True:
 
-            sg.theme('DarkAmber')
             layout = [  [sg.Text("Welcome to The Dani Bank")],
                         [sg.Text("What would you like to do?")],
                         [sg.Button("Create account"), sg.Button("Access account"), sg.Exit()]]
@@ -89,7 +88,6 @@ class Bank:
 
         self.number = random.randint(1000, 2000)
 
-        sg.theme('DarkAmber')
         layout = [[sg.Text("Please provide your full name: ")],
                 [sg.InputText()],
                 [sg.Button('Enter'), sg.Button('Cancel')] ]
@@ -104,7 +102,6 @@ class Bank:
 
             self.account = Account(self.number, self.owner)
 
-            sg.theme('DarkAmber')
             layout = [[sg.Text("New account number: " + str(self.number))],
                     [sg.Text("Account holder: " + str(self.owner))],
                     [sg.Text("Would you like to make a deposit?")],
@@ -116,10 +113,10 @@ class Bank:
 
             while True:
                 if event in (sg.WIN_CLOSED, 'Yes'):
+                        window.close()
                         self.deposit()
                 elif event in (sg.WIN_CLOSED, 'No'):
                     
-                    sg.theme('DarkAmber')
                     layout = [[sg.Text("Thank you for creating an account with us.")],
                             [sg.Button('Exit')]]
 
@@ -189,7 +186,6 @@ class Bank:
                 user_input = input("a. deposit   b. withdraw   c. back: ")
 
     def deposit(self):
-        sg.theme('DarkAmber')
         layout = [[sg.Text("How much are you depositing: ")],
                 [sg.InputText()],
                 [sg.Button('Enter'), sg.Button('Cancel')] ]
@@ -206,7 +202,6 @@ class Bank:
             amount = float(deposit_amount)
         # If the input is not a number, show error and try again
         except ValueError:
-                    sg.theme('DarkAmber')
                     layout = [[sg.Text("Invalid input. Please enter a number.")],
                             [sg.Button('Ok')]]
 
@@ -222,7 +217,6 @@ class Bank:
 
         # Doesn't allow negative or zero deposits
         if amount <= 0:
-            sg.theme('DarkAmber')
             layout = [[sg.Text("Invalid amount. Please enter a positive number.")],
                     [sg.Button('Ok')]]
 
@@ -240,14 +234,30 @@ class Bank:
         self.account.deposit(amount)
 
         # Uses the check_balance method/function from the Account class to show the new balance
-        balance = self.account.check_balance()
-        print("New balance: $" + str(balance))
 
-        self.main()
+        balance = self.account.check_balance()
+
+        layout = [[sg.Text("New balance: $" + str(balance))],
+                [sg.Button('Back to Menu')], [sg.Button('Exit')]]
+
+        window = sg.Window('Window Title', layout)
+
+        event, values = window.read()
+
+        if event in (sg.WIN_CLOSED, 'Exit'):
+            window.close()
+            self.exit()
+            # self.main()
+            # self.deposit()
+            # break
+
+
+
+        if event in (sg.WIN_CLOSED, 'Back to Menu'):
+            self.main()
 
     def exit(self):
                     
-        sg.theme('DarkAmber')
         layout = [[sg.Text("Thank you for banking with us. Goodbye!")],
                 [sg.Button('Exit')]]
 
