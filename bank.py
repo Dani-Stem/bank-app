@@ -133,41 +133,14 @@ class Bank:
         if event in (sg.WIN_CLOSED, 'deposit'):
             window.close()
             self.deposit()
-            # break
 
         if event in (sg.WIN_CLOSED, 'withdraw'):
             window.close()
-
-            layout = [[sg.Text("Enter amount to withdraw: ")],
-                    [sg.InputText()],
-                    [sg.Button('Enter'), sg.Button('Cancel')] ]
-
-            window = sg.Window('Withdraw', layout)
-
-            event, values = window.read()
-
-            if event in (sg.WIN_CLOSED, 'Enter'):
-                window.close()
-
-                amount = float(values[0])
-
-                self.withdraw(amount)
-
-                # Uses the withdraw method/function from the Account class
-                result = self.account.withdraw(amount)
-
-                # Checks if the withdrawal was successful
-                if result == "Insufficient funds":
-                    print(result)
-                else:
-                    print(f"New balance: ${result}")
-
-                self.main()
+            self.withdraw()
 
         if event in (sg.WIN_CLOSED, 'Exit'):
             window.close()
             self.exit()
-            # break
 
     def deposit(self):
         layout = [[sg.Text("How much are you depositing: ")],
@@ -215,6 +188,69 @@ class Bank:
                 # break
 
         self.account.deposit(amount)
+
+        balance = self.account.check_balance()
+
+        layout = [[sg.Text("New balance: $" + str(balance))],
+                [sg.Button('Back to Menu')], [sg.Button('Exit')]]
+
+        window = sg.Window('Account Info', layout)
+
+        event, values = window.read()
+
+        if event in (sg.WIN_CLOSED, 'Exit'):
+            window.close()
+            self.exit()
+
+
+        if event in (sg.WIN_CLOSED, 'Back to Menu'):
+            window.close()
+            self.main()
+
+
+    def withdraw(self):
+        layout = [[sg.Text("How much are you withdrawing: ")],
+                [sg.InputText()],
+                [sg.Button('Enter'), sg.Button('Cancel')] ]
+
+        window = sg.Window('Withdraw', layout)
+
+        event, values = window.read()
+
+        withdraw_amount = values[0]
+        window.close()
+
+        try:
+            amount = float(withdraw_amount)
+
+        except ValueError:
+                    layout = [[sg.Text("Invalid input. Please enter a number.")],
+                            [sg.Button('Ok')]]
+
+                    window = sg.Window('Withdraw', layout)
+
+                    event, values = window.read()
+
+                    if event in (sg.WIN_CLOSED, 'Ok'):
+                        window.close()
+                        self.main()
+                        self.withdraw()
+
+        if amount <= 0:
+            layout = [[sg.Text("Invalid amount. Please enter a positive number.")],
+                    [sg.Button('Ok')]]
+
+            window = sg.Window('Dani Bank - Error', layout)
+
+            event, values = window.read()
+
+            if event in (sg.WIN_CLOSED, 'Ok'):
+                window.close()
+                self.main()
+                self.deposit()
+                # break
+
+        self.account.withdraw(amount)
 
         balance = self.account.check_balance()
 
