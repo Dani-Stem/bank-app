@@ -117,6 +117,7 @@ class Bank:
                         self.deposit()
                 elif event in (sg.WIN_CLOSED, 'No'):
                     
+                    window.close()
                     layout = [[sg.Text("Thank you for creating an account with us.")],
                             [sg.Button('Exit')]]
 
@@ -126,7 +127,6 @@ class Bank:
 
                     if event in (sg.WIN_CLOSED, 'Exit'):
                         window.close()
-                        self.main()
                         quit()
 
             # print("New account number: " + str(self.number))
@@ -149,21 +149,37 @@ class Bank:
             #         decision = input("Please type y or n: ")
 
     def access_account(self):
-        # Accesses the owner variable from the Account class
-        print(f"Welcome back, {self.account.owner}!")
-        # Uses the check_balance method/function from the Account class
-        print(f"Your current balance is: ${self.account.check_balance()}")
-        print("Would you like to make a deposit or withdraw?")
+        layout = [[sg.Text(f"Welcome back, {self.account.owner}!")],
+                [sg.Text(f"Your current balance is: ${self.account.check_balance()}")], 
+                [sg.Text("Would you like to make a deposit or withdraw?")],
+                [sg.Button('deposit')], [sg.Button('withdraw')], [sg.Button('Exit')]]
 
-        user_input = input("a. deposit   b. withdraw   c. back: ")
+        window = sg.Window('Window Title', layout)
 
-        while True:  # Loops until user makes a valid choice
-            if user_input == "a":
-                self.deposit()
-                break
+        event, values = window.read()
 
-            elif user_input == "b":
-                amount = float(input("Enter amount to withdraw: "))
+        if event in (sg.WIN_CLOSED, 'deposit'):
+            window.close()
+            self.deposit()
+            # break
+
+        if event in (sg.WIN_CLOSED, 'withdraw'):
+            window.close()
+
+            layout = [[sg.Text("Enter amount to withdraw: ")],
+                    [sg.InputText()],
+                    [sg.Button('Enter'), sg.Button('Cancel')] ]
+
+            window = sg.Window('Window Title', layout)
+
+            event, values = window.read()
+
+            if event in (sg.WIN_CLOSED, 'Enter'):
+                window.close()
+
+                amount = float(values[0])
+
+                self.withdraw(amount)
 
                 # Uses the withdraw method/function from the Account class
                 result = self.account.withdraw(amount)
@@ -175,15 +191,11 @@ class Bank:
                     print(f"New balance: ${result}")
 
                 self.main()
-                break
 
-            elif user_input == "c":
-                self.main()
-                break
-
-            else:
-                print("Invalid option. Please try again.")
-                user_input = input("a. deposit   b. withdraw   c. back: ")
+        if event in (sg.WIN_CLOSED, 'Exit'):
+            window.close()
+            self.exit()
+            # break
 
     def deposit(self):
         layout = [[sg.Text("How much are you depositing: ")],
@@ -255,6 +267,7 @@ class Bank:
 
         if event in (sg.WIN_CLOSED, 'Back to Menu'):
             self.main()
+            window.close()
 
     def exit(self):
                     
