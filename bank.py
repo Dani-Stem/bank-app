@@ -1,9 +1,6 @@
 import random
 import FreeSimpleGUI as sg
 
-sg.theme('DarkAmber')
-
-# The Bank class uses this Account class to create and access an account
 class Account:
     def __init__(self, number, owner):
         self.number = number
@@ -24,14 +21,12 @@ class Account:
     def check_balance(self):
         return self.balance
 
-
-# Main class
 class Bank:
     def __init__(self):
         self.number = 0
         self.owner = ""
         self.account = None
-        self.main()  # Starts the main menu when the program starts
+        self.main() 
 
     def main(self):
 
@@ -39,15 +34,15 @@ class Bank:
 
             layout = [  [sg.Text("Welcome to The Dani Bank")],
                         [sg.Text("What would you like to do?")],
-                        [sg.Button("Create account"), sg.Button("Access account"), sg.Exit()]]
+                        [sg.Button("Create account"), sg.Button("Access account"), sg.Button("" \
+                        "Exit")]]
 
-            # Create the Window
-            window = sg.Window('Window Title', layout)
-            # Event Loop to process "events"
+            window = sg.Window('Dani Bank - Menu', layout)
             while True:
                 event, values = window.read()
                 if event in (sg.WIN_CLOSED, 'Exit'):
-                    break
+                    window.close()
+                    self.exit()
 
                 elif event in (sg.WIN_CLOSED, 'Create account'):
                     
@@ -55,31 +50,27 @@ class Bank:
 
                     if self.account is None:
 
-                        # If no account exists, allow user to create one
                         self.create_account()
-                        break
-                    # else:
-                    #     # If an account already exists, this prevents creation of another
-                    #     print("Account already exists")
-                    #     user_input = input("Would you like to access your account? (y/n): ")
-                    #     if user_input == "y":
-                    #         self.access_account()
-                    #         break
-                    #     else:
-                    #         self.main()
-                    #         break
                     
                 elif event in (sg.WIN_CLOSED, 'Access account'):
-                    
+                    window.close()
                     if self.account is None:
-                        print("No account found. Please create an account first.")
-                        user_input = input("Would you like to create an account? (y/n): ")
-                        if user_input == "y":
+                    
+                        self.number = random.randint(1000, 2000)
+
+                        layout = [[sg.Text("No account found. Please create an account first.")],[sg.Text("Would you like to create an account?")],
+                                [sg.Button('Yes'), sg.Button('Cancel')] ]
+
+                        window = sg.Window('Create Account', layout)
+
+                        event, values = window.read()
+
+                        if event in (sg.WIN_CLOSED, 'Yes'):
+                            window.close()
                             self.create_account()
-                            break
-                        else: 
-                            self.main()
-                            break
+                        if event in (sg.WIN_CLOSED, 'Cancel'):
+                            window.close()
+                            self.exit()
                     else:
                         self.access_account()
                         break
@@ -89,15 +80,15 @@ class Bank:
         self.number = random.randint(1000, 2000)
 
         layout = [[sg.Text("Please provide your full name: ")],
-                [sg.InputText()],
+                [sg.InputText(key="owner")],
                 [sg.Button('Enter'), sg.Button('Cancel')] ]
 
-        window = sg.Window('Window Title', layout)
+        window = sg.Window('Create Account', layout)
 
         event, values = window.read()
 
         if event in (sg.WIN_CLOSED, 'Enter'):
-            self.owner = sg.InputText
+            self.owner = values["owner"]
             window.close()
 
             self.account = Account(self.number, self.owner)
@@ -107,7 +98,7 @@ class Bank:
                     [sg.Text("Would you like to make a deposit?")],
                     [sg.Button('Yes'), sg.Button('No')] ]
 
-            window = sg.Window('Window Title', layout)
+            window = sg.Window('Access Account', layout)
 
             event, values = window.read()
 
@@ -115,13 +106,13 @@ class Bank:
                 if event in (sg.WIN_CLOSED, 'Yes'):
                         window.close()
                         self.deposit()
-                elif event in (sg.WIN_CLOSED, 'No'):
+                if event in (sg.WIN_CLOSED, 'No'):
                     
                     window.close()
                     layout = [[sg.Text("Thank you for creating an account with us.")],
                             [sg.Button('Exit')]]
 
-                    window = sg.Window('Window Title', layout)
+                    window = sg.Window('Dani Bank - Goodbye', layout)
 
                     event, values = window.read()
 
@@ -129,32 +120,13 @@ class Bank:
                         window.close()
                         quit()
 
-            # print("New account number: " + str(self.number))
-            # print("Account holder: " + str(self.owner))
-            # print("Would you like to make a deposit?")
-
-            # decision = input("Type y or n: ")
-
-            # This loop keeps running until the user enters a valid response (y or n)
-            # while True:
-            #     if decision == "y":
-            #         self.deposit()
-            #         break
-            #     elif decision == "n":
-            #         print("Thank you for creating an account with us.")
-            #         self.main()
-            #         break
-            #     else:
-            #         print("Invalid option. Please try again.")
-            #         decision = input("Please type y or n: ")
-
     def access_account(self):
         layout = [[sg.Text(f"Welcome back, {self.account.owner}!")],
                 [sg.Text(f"Your current balance is: ${self.account.check_balance()}")], 
                 [sg.Text("Would you like to make a deposit or withdraw?")],
                 [sg.Button('deposit')], [sg.Button('withdraw')], [sg.Button('Exit')]]
 
-        window = sg.Window('Window Title', layout)
+        window = sg.Window('Access Account', layout)
 
         event, values = window.read()
 
@@ -170,7 +142,7 @@ class Bank:
                     [sg.InputText()],
                     [sg.Button('Enter'), sg.Button('Cancel')] ]
 
-            window = sg.Window('Window Title', layout)
+            window = sg.Window('Withdraw', layout)
 
             event, values = window.read()
 
@@ -202,7 +174,7 @@ class Bank:
                 [sg.InputText()],
                 [sg.Button('Enter'), sg.Button('Cancel')] ]
 
-        window = sg.Window('Window Title', layout)
+        window = sg.Window('Deposit', layout)
 
         event, values = window.read()
 
@@ -217,7 +189,7 @@ class Bank:
                     layout = [[sg.Text("Invalid input. Please enter a number.")],
                             [sg.Button('Ok')]]
 
-                    window = sg.Window('Window Title', layout)
+                    window = sg.Window('Deposit', layout)
 
                     event, values = window.read()
 
@@ -232,7 +204,7 @@ class Bank:
             layout = [[sg.Text("Invalid amount. Please enter a positive number.")],
                     [sg.Button('Ok')]]
 
-            window = sg.Window('Window Title', layout)
+            window = sg.Window('Dani Bank - Error', layout)
 
             event, values = window.read()
 
@@ -242,45 +214,37 @@ class Bank:
                 self.deposit()
                 # break
 
-        # Deposit using the Account class's method/function
         self.account.deposit(amount)
-
-        # Uses the check_balance method/function from the Account class to show the new balance
 
         balance = self.account.check_balance()
 
         layout = [[sg.Text("New balance: $" + str(balance))],
                 [sg.Button('Back to Menu')], [sg.Button('Exit')]]
 
-        window = sg.Window('Window Title', layout)
+        window = sg.Window('Account Info', layout)
 
         event, values = window.read()
 
         if event in (sg.WIN_CLOSED, 'Exit'):
-            self.exit()
             window.close()
-            # self.main()
-            # self.deposit()
-            # break
-
+            self.exit()
 
 
         if event in (sg.WIN_CLOSED, 'Back to Menu'):
-            self.main()
             window.close()
+            self.main()
 
     def exit(self):
                     
         layout = [[sg.Text("Thank you for banking with us. Goodbye!")],
                 [sg.Button('Exit')]]
 
-        window = sg.Window('Window Title', layout)
+        window = sg.Window('Dani Bank - Goodbye', layout)
 
         event, values = window.read()
 
         if event in (sg.WIN_CLOSED, 'Exit'):
             window.close()
-            self.main()
             quit()
 
 
