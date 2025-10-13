@@ -42,9 +42,21 @@ class Account:
             return "Insufficient funds"
         else:
             self.balance -= amount
+
+            cursor.execute(f"UPDATE accounts SET Balance = {self.balance} WHERE Number = {self.number}")
+            conn.commit()
+
             return self.balance
 
     def check_balance(self):
+
+        cursor.execute(f"SELECT Balance FROM accounts WHERE Number = {self.number}")
+        all_data = cursor.fetchone()
+
+        for data in all_data:
+            self.balance = data
+
+        conn.commit()
         return self.balance
 
 class Bank:
@@ -55,6 +67,7 @@ class Bank:
         self.main() 
 
     def main(self):
+        self.account = None
 
         while True:
 
@@ -82,25 +95,37 @@ class Bank:
                     window.close()
                     if self.account is None:
                     
-                        self.number = random.randint(1000, 2000)
+                        layout = [[sg.Text("Please Enter your account number: ")],[sg.InputText(key="number")],[sg.Button('Enter'), sg.Button('Cancel')] ]
 
-                        layout = [[sg.Text("No account found. Please create an account first.")],[sg.Text("Would you like to create an account?")],
-                                [sg.Button('Yes'), sg.Button('Cancel')] ]
-
-                        window = sg.Window('Create Account', layout)
+                        window = sg.Window('Access Account', layout)
 
                         event, values = window.read()
 
-                        if event in (sg.WIN_CLOSED, 'Yes'):
+                        if event in (sg.WIN_CLOSED, 'Enter'):
+                            self.number = values["number"]
+
+                            cursor.execute(f"SELECT Owner FROM accounts WHERE Number = {self.number}")
+                            all_data = cursor.fetchone()
+                            for data in all_data:
+                                clean_data = data
+                                self.owner = clean_data
+                            conn.commit()
+
+                            cursor.execute(f"SELECT Balance FROM accounts WHERE Number = {self.number}")
+                            all_data = cursor.fetchone()
+                            for data in all_data:
+                                self.balance = data
+                            conn.commit()
+
+                            self.account = Account(self.number, self.owner)
+
                             window.close()
-                            self.create_account()
+                            self.access_account()
+
                         if event in (sg.WIN_CLOSED, 'Cancel'):
                             window.close()
-                            self.exit()
-                    else:
-                        self.access_account()
-                        break
-           
+                            self.main()
+                            
     def create_account(self):
 
         self.number = random.randint(1000, 2000)
@@ -152,7 +177,7 @@ class Bank:
                         quit()
 
     def access_account(self):
-        layout = [[sg.Text(f"Welcome back, {self.account.owner}!")],
+        layout = [[sg.Text(f"Welcome back, {self.owner}!")],
                 [sg.Text(f"Your current balance is: ${self.account.check_balance()}")], 
                 [sg.Text("Would you like to make a deposit or withdraw?")],
                 [sg.Button('deposit')], [sg.Button('withdraw')], [sg.Button('Exit')]]
