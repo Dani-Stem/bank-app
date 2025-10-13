@@ -2,10 +2,20 @@ import random
 import FreeSimpleGUI as sg
 import sqlite3
 
-conn = sqlite3.connect('example.db')
+conn = sqlite3.connect('accounts.db')
 
 cursor = conn.cursor()
-cursor.execute("SELECT * FROM users")
+
+create_table_query = '''
+CREATE TABLE IF NOT EXISTS accounts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Number INT NOT NULL UNIQUE,
+    Owner TEXT NOT NULL,
+    Balance INT
+);
+'''
+
+cursor.execute("SELECT * FROM accounts")
 all_users = cursor.fetchall()
 
 print("All users in the database:")
@@ -14,8 +24,6 @@ for user in all_users:
 
 conn.commit()
 
-conn.close()
-
 class Account:
     def __init__(self, number, owner):
         self.number = number
@@ -23,7 +31,10 @@ class Account:
         self.balance = 0
 
     def deposit(self, amount):
+
         self.balance += amount
+        cursor.execute(f"UPDATE accounts SET Balance = {self.balance} WHERE Number = {self.number}")
+        conn.commit()
         return self.balance
 
     def withdraw(self, amount):
@@ -104,6 +115,11 @@ class Bank:
 
         if event in (sg.WIN_CLOSED, 'Enter'):
             self.owner = values["owner"]
+
+            cursor.execute("INSERT INTO accounts (Number, Owner, Balance) VALUES (?, ?, ?)", (f"{self.number}", f"{self.owner}", "0"))
+
+            conn.commit()
+
             window.close()
 
             self.account = Account(self.number, self.owner)
@@ -296,6 +312,7 @@ class Bank:
 
         if event in (sg.WIN_CLOSED, 'Exit'):
             window.close()
+            conn.close()        
             quit()
 
 
