@@ -1,5 +1,20 @@
 import random
 import FreeSimpleGUI as sg
+import sqlite3
+
+conn = sqlite3.connect('example.db')
+
+cursor = conn.cursor()
+cursor.execute("SELECT * FROM users")
+all_users = cursor.fetchall()
+
+print("All users in the database:")
+for user in all_users:
+    print(user)
+
+conn.commit()
+
+conn.close()
 
 class Account:
     def __init__(self, number, owner):
