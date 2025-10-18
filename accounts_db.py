@@ -14,15 +14,18 @@ CREATE TABLE IF NOT EXISTS users (
 );
 '''
 
-cursor.execute(create_table_query)
-cursor.execute("INSERT INTO users (name, login, password, account_num) VALUES (?, ?, ?, ?)", ("Dani stem", "dd1234", "angel", 1))
+# cursor.execute(create_table_query)
+# cursor.execute("INSERT INTO users (name, login, password, account_num) VALUES (?, ?, ?, ?)", ("Dani stem", "dd1234", "angel", 1))
 
-cursor.execute("SELECT * FROM users")
-all_users = cursor.fetchall()
+cursor.execute("SELECT number FROM accounts WHERE number = (select account_num from users where login = 'dd1234')")
+all_users = cursor.fetchone()
+
 
 print("All users in the database:")
-for user in all_users:
-    print(user)
+# for user in all_users:
+clean_data = ''.join(str(all_users))
+cleaner_data = clean_data.replace(",","").replace("(","").replace(")","")
+print(cleaner_data)
 
 
 

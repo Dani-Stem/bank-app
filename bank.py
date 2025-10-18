@@ -1,6 +1,8 @@
 import random
 import FreeSimpleGUI as sg
 import sqlite3
+import bcrypt
+
 
 conn = sqlite3.connect('accounts.db')
 
@@ -25,10 +27,12 @@ for user in all_users:
 conn.commit()
 
 class Account:
-    def __init__(self, number, owner):
+    def __init__(self, number, owner, username, password):
         self.number = number
         self.owner = owner
         self.balance = 0
+        self.username = username
+        self.password = password
 
     def deposit(self, amount):
 
@@ -64,6 +68,8 @@ class Bank:
         self.number = 0
         self.owner = ""
         self.account = None
+        self.username = ""
+        self.password = ""
         self.main() 
 
     def main(self):
@@ -95,29 +101,42 @@ class Bank:
                     window.close()
                     if self.account is None:
                     
-                        layout = [[sg.Text("Please Enter your account number: ")],[sg.InputText(key="number")],[sg.Button('Enter'), sg.Button('Cancel')] ]
+                        layout = [[sg.Text("Please Enter your log in username and password. ")],[sg.Text("Username:")],[sg.InputText(key="Username")],[sg.Text("Password:")],[sg.InputText(key="Password")],[sg.Button('Enter'), sg.Button('Cancel')] ]
 
-                        window = sg.Window('Access Account', layout)
+                        window = sg.Window('Login', layout)
 
                         event, values = window.read()
 
                         if event in (sg.WIN_CLOSED, 'Enter'):
-                            self.number = values["number"]
+                            self.username = values["Username"]
+                            password_input = values["Password"]
 
-                            cursor.execute(f"SELECT Owner FROM accounts WHERE Number = {self.number}")
+                            cursor.execute(f"SELECT password FROM users WHERE login = '{self.username}'")
                             all_data = cursor.fetchone()
                             for data in all_data:
-                                clean_data = data
-                                self.owner = clean_data
+                                self.password = data
                             conn.commit()
 
-                            cursor.execute(f"SELECT Balance FROM accounts WHERE Number = {self.number}")
+                            cursor.execute(f"SELECT number FROM accounts WHERE number = (select account_num from users where login = '{self.username}')")
                             all_data = cursor.fetchone()
                             for data in all_data:
-                                self.balance = data
+                                self.number = data
                             conn.commit()
 
-                            self.account = Account(self.number, self.owner)
+                            password_input = self.password.encode('utf-8')
+                            salt = bcrypt.gensalt()
+                            hashed_password = bcrypt.hashpw(password_input, salt)
+
+                            is_correct = bcrypt.checkpw(password_input, hashed_password)
+                            print(f"Verification (correct password): {is_correct}")
+
+                            # cursor.execute(f"SELECT Balance FROM accounts WHERE Number = {self.number}")
+                            # all_data = cursor.fetchone()
+                            # for data in all_data:
+                            #     self.balance = data
+                            # conn.commit()
+
+                            self.account = Account(self.owner, self.number, self.username, self.password)
 
                             window.close()
                             self.access_account()
@@ -147,7 +166,7 @@ class Bank:
 
             window.close()
 
-            self.account = Account(self.number, self.owner)
+            self.account = Account(self.owner, self.number, self.username, self.password)
 
             layout = [[sg.Text("New account number: " + str(self.number))],
                     [sg.Text("Account holder: " + str(self.owner))],
