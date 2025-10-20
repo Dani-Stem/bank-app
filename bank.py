@@ -54,11 +54,12 @@ class Account:
 
     def check_balance(self):
 
-        cursor.execute(f"SELECT Balance FROM accounts WHERE Number = {self.number}")
+        cursor.execute(f"SELECT Balance FROM accounts WHERE Number = '{self.number}'")
+        print(self.number)
         all_data = cursor.fetchone()
-
-        for data in all_data:
-            self.balance = data
+        clean_data = int(all_data[0])
+        print(clean_data)
+        self.balance = clean_data
 
         conn.commit()
         return self.balance
@@ -117,10 +118,12 @@ class Bank:
                                 self.password = data
                             conn.commit()
 
-                            cursor.execute(f"SELECT number FROM accounts WHERE number = (select account_num from users where login = '{self.username}')")
-                            all_data = cursor.fetchone()
-                            for data in all_data:
-                                self.number = data
+                            cursor.execute(f"select number from accounts JOIN users on accounts.Number = users.account_num where users.login = '{self.username}'")
+                            all_users = cursor.fetchone()
+                            clean_data = int(all_users[0])
+                            print(clean_data)
+                            self.number = clean_data
+                            print(self.number)
                             conn.commit()
 
                             password_input = self.password.encode('utf-8')

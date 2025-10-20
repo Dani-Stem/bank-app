@@ -17,13 +17,24 @@ CREATE TABLE IF NOT EXISTS users (
 # cursor.execute(create_table_query)
 # cursor.execute("INSERT INTO users (name, login, password, account_num) VALUES (?, ?, ?, ?)", ("Dani stem", "dd1234", "angel", 1))
 
-cursor.execute("select number from accounts JOIN users on accounts.Number = users.account_num where users.login = 'dd1234'")
-all_users = cursor.fetchone()
+# cursor.execute("select number from accounts JOIN users on accounts.Number = users.account_num where users.login = 'dd1234'")
+# all_users = cursor.fetchone()
+
+# print("All users in the database:")
+# # for user in all_users:
+# clean_data = int(all_users[0])
+# print(clean_data)
+
+
+
+cursor.execute("SELECT Balance FROM accounts WHERE Number = '1'")
 
 print("All users in the database:")
-# for user in all_users:
-clean_data = int(all_users[0])
+all_data = cursor.fetchone()
+clean_data = int(all_data[0])
+print(all_data)
 print(clean_data)
+conn.commit()
 
 # cursor.execute("INSERT INTO accounts (Number, Owner, Balance) VALUES (?, ?, ?)", (f"{number}", f"{owner}", "0"))
 
