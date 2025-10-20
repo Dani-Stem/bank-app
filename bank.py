@@ -132,7 +132,7 @@ class Bank:
                             all_data = cursor.fetchone()
                             for data in all_data:
                                 self.password = data
-                                print("db password: "+ self.password)
+                                print("db password: "+ str(self.password))
                             conn.commit()
 
                             cursor.execute(f"select number from accounts JOIN users on accounts.Number = users.account_num where users.login = '{self.username}'")

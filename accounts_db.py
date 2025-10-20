@@ -10,7 +10,7 @@ hashed_pass = bcrypt.hashpw(password, salt)
 print(f"Hashed password: {hashed_pass}")
 
 cursor = conn.cursor()
-cursor.execute(f"UPDATE users SET password = '{hashed_pass}' where account_num = 1")
+cursor.execute("UPDATE users SET password = ? where account_num = 1", (hashed_pass,))
 cursor.execute("SELECT * FROM users")
 all_users = cursor.fetchall()
 
