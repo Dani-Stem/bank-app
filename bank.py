@@ -17,10 +17,26 @@ CREATE TABLE IF NOT EXISTS accounts (
 );
 '''
 
+create_table_query = '''
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE,
+    login TEXT NOT NULL,
+    password TEXT NOT NULL,
+    account_num INT NOT NULL
+);'''
+
 cursor.execute("SELECT * FROM accounts")
 all_users = cursor.fetchall()
 
 print("All users in the database:")
+for user in all_users:
+    print(user)
+
+cursor.execute("SELECT * FROM users")
+all_users = cursor.fetchall()
+
+print("All logins in the database:")
 for user in all_users:
     print(user)
 
@@ -116,6 +132,7 @@ class Bank:
                             all_data = cursor.fetchone()
                             for data in all_data:
                                 self.password = data
+                                print("db password: "+ self.password)
                             conn.commit()
 
                             cursor.execute(f"select number from accounts JOIN users on accounts.Number = users.account_num where users.login = '{self.username}'")
@@ -130,8 +147,8 @@ class Bank:
                             salt = bcrypt.gensalt()
                             hashed_password = bcrypt.hashpw(password_input, salt)
 
-                            is_correct = bcrypt.checkpw(password_input, hashed_password)
-                            print(f"Verification (correct password): {is_correct}")
+                            is_correct = bcrypt.checkpw(hashed_password, self.password)
+                            print(f"Verification: {is_correct}")
 
                             # cursor.execute(f"SELECT Balance FROM accounts WHERE Number = {self.number}")
                             # all_data = cursor.fetchone()
