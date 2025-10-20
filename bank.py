@@ -139,7 +139,7 @@ class Bank:
                             #     self.balance = data
                             # conn.commit()
 
-                            self.account = Account(self.owner, self.number, self.username, self.password)
+                            self.account = Account(self.number, self.owner, self.username, self.password)
 
                             window.close()
                             self.access_account()
