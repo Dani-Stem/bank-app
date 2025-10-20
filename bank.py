@@ -8,6 +8,8 @@ conn = sqlite3.connect('accounts.db')
 
 cursor = conn.cursor()
 
+salt = bcrypt.gensalt()
+
 create_table_query = '''
 CREATE TABLE IF NOT EXISTS accounts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -142,12 +144,11 @@ class Bank:
                             self.number = clean_data
                             print(self.number)
                             conn.commit()
-
-                            password_input = self.password.encode('utf-8')
-                            salt = bcrypt.gensalt()
-                            hashed_password = bcrypt.hashpw(password_input, salt)
-
-                            is_correct = bcrypt.checkpw(hashed_password, self.password)
+                            print("password input: " + password_input)
+                            print("actual password: " + str(self.password))
+                            
+                            bcrypt.checkpw(password_input, salt)
+                            is_correct = bcrypt.checkpw(password_input, self.password)
                             print(f"Verification: {is_correct}")
 
                             # cursor.execute(f"SELECT Balance FROM accounts WHERE Number = {self.number}")
