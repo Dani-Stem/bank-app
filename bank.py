@@ -55,7 +55,7 @@ class Account:
     def deposit(self, amount):
 
         self.balance += amount
-        cursor.execute(f"UPDATE accounts SET Balance = {self.balance} WHERE Number = {self.number}")
+        cursor.execute("UPDATE accounts SET Balance = ? WHERE Number = ?", (self.balance, self.number))
         conn.commit()
         return self.balance
 
@@ -65,14 +65,14 @@ class Account:
         else:
             self.balance -= amount
 
-            cursor.execute(f"UPDATE accounts SET Balance = {self.balance} WHERE Number = {self.number}")
+            cursor.execute("UPDATE accounts SET Balance = ? WHERE Number = ?", (self.balance, self.number))
             conn.commit()
 
             return self.balance
 
     def check_balance(self):
 
-        cursor.execute(f"SELECT Balance FROM accounts WHERE Number = '{self.number}'")
+        cursor.execute("SELECT Balance FROM accounts WHERE Number = ?", (self.number))
         print(self.number)
         all_data = cursor.fetchone()
         clean_data = int(all_data[0])
