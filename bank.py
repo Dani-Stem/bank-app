@@ -216,7 +216,7 @@ class Bank:
                         quit()
 
     def access_account(self):
-        layout = [[sg.Text("Welcome back, ? !", (self.owner))],
+        layout = [[sg.Text(f"Welcome back, {self.owner}!")],
                 [sg.Text(f"Your current balance is: ${self.account.check_balance()}")], 
                 [sg.Text("Would you like to make a deposit or withdraw?")],
                 [sg.Button('deposit')], [sg.Button('withdraw')], [sg.Button('Exit')]]
