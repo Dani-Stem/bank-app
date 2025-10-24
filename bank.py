@@ -130,14 +130,14 @@ class Bank:
                             self.username = values["Username"]
                             password_input = values["Password"]
 
-                            cursor.execute(f"SELECT password FROM users WHERE login = '{self.username}'")
+                            cursor.execute("SELECT password FROM users WHERE login = ? ", (self.username))
                             all_data = cursor.fetchone()
                             for data in all_data:
                                 self.password = data
                                 print("db password: "+ str(self.password))
                             conn.commit()
 
-                            cursor.execute(f"select number from accounts JOIN users on accounts.Number = users.account_num where users.login = '{self.username}'")
+                            cursor.execute("select number from accounts JOIN users on accounts.Number = users.account_num where users.login = ? ", (self.username))
                             all_users = cursor.fetchone()
                             clean_data = int(all_users[0])
                             print(clean_data)
@@ -149,7 +149,7 @@ class Bank:
                             
                             bcrypt.checkpw(password_input, salt)
                             is_correct = bcrypt.checkpw(password_input, self.password)
-                            print(f"Verification: {is_correct}")
+                            print("Verification: ?", (is_correct))
 
                             # cursor.execute(f"SELECT Balance FROM accounts WHERE Number = {self.number}")
                             # all_data = cursor.fetchone()
@@ -181,7 +181,7 @@ class Bank:
         if event in (sg.WIN_CLOSED, 'Enter'):
             self.owner = values["owner"]
 
-            cursor.execute("INSERT INTO accounts (Number, Owner, Balance) VALUES (?, ?, ?)", (f"{self.number}", f"{self.owner}", "0"))
+            cursor.execute("INSERT INTO accounts (Number, Owner, Balance) VALUES (?, ?, ?)", ("?, ?, 0", (self.number, self.owner,)))
 
             conn.commit()
 
@@ -217,7 +217,7 @@ class Bank:
                         quit()
 
     def access_account(self):
-        layout = [[sg.Text(f"Welcome back, {self.owner}!")],
+        layout = [[sg.Text("Welcome back, ? !", (self.owner))],
                 [sg.Text(f"Your current balance is: ${self.account.check_balance()}")], 
                 [sg.Text("Would you like to make a deposit or withdraw?")],
                 [sg.Button('deposit')], [sg.Button('withdraw')], [sg.Button('Exit')]]
