@@ -72,7 +72,7 @@ class Account:
 
     def check_balance(self):
 
-        cursor.execute("SELECT Balance FROM accounts WHERE Number = ?", (self.number))
+        cursor.execute("SELECT Balance FROM accounts WHERE Number = ?", (self.number,))
         print(self.number)
         all_data = cursor.fetchone()
         clean_data = int(all_data[0])
@@ -130,14 +130,14 @@ class Bank:
                             self.username = values["Username"]
                             password_input = values["Password"]
 
-                            cursor.execute("SELECT password FROM users WHERE login = ? ", (self.username))
+                            cursor.execute("SELECT password FROM users WHERE login = ? ", (self.username,))
                             all_data = cursor.fetchone()
                             for data in all_data:
                                 self.password = data
                                 print("db password: "+ str(self.password))
                             conn.commit()
 
-                            cursor.execute("select number from accounts JOIN users on accounts.Number = users.account_num where users.login = ? ", (self.username))
+                            cursor.execute("select number from accounts JOIN users on accounts.Number = users.account_num where users.login = ? ", (self.username,))
                             all_users = cursor.fetchone()
                             clean_data = int(all_users[0])
                             print(clean_data)
@@ -147,8 +147,7 @@ class Bank:
                             print("password input: " + password_input)
                             print("actual password: " + str(self.password))
                             
-                            bcrypt.checkpw(password_input, salt)
-                            is_correct = bcrypt.checkpw(password_input, self.password)
+                            is_correct = bcrypt.checkpw(password_input.encode('utf-8'), self.password)
                             print("Verification: ?", (is_correct))
 
                             # cursor.execute(f"SELECT Balance FROM accounts WHERE Number = {self.number}")
@@ -181,7 +180,7 @@ class Bank:
         if event in (sg.WIN_CLOSED, 'Enter'):
             self.owner = values["owner"]
 
-            cursor.execute("INSERT INTO accounts (Number, Owner, Balance) VALUES (?, ?, ?)", ("?, ?, 0", (self.number, self.owner,)))
+            cursor.execute("INSERT INTO accounts (Number, Owner, Balance) VALUES (?, ?, ?)", (self.number, self.owner, "0"))
 
             conn.commit()
 
