@@ -157,9 +157,21 @@ class Bank:
                             # conn.commit()
 
                             self.account = Account(self.number, self.owner, self.username, self.password)
+                            if is_correct:
+                                window.close()
+                                self.access_account()
+                            else:
+                                window.close()
+                                layout = [[sg.Text("Username or Password incorrect")],
+                                [sg.Button('Okay'),]]
 
-                            window.close()
-                            self.access_account()
+                                window = sg.Window('Login Failed', layout)
+
+                                event, values = window.read()
+
+                                if event in (sg.WIN_CLOSED, 'Okay'):
+                                    window.close()
+                                    self.main()
 
                         if event in (sg.WIN_CLOSED, 'Cancel'):
                             window.close()
