@@ -3,7 +3,7 @@ import bcrypt
 
 conn = sqlite3.connect('accounts.db')
 
-user_input = 'dd1234'
+user_input = 'angel'
 password = user_input.encode('utf-8')
 salt = bcrypt.gensalt()
 hashed_pass = bcrypt.hashpw(password, salt)
