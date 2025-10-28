@@ -10,7 +10,7 @@ cursor = conn.cursor()
 
 salt = bcrypt.gensalt()
 
-create_table_query = '''
+create_account_query = '''
 CREATE TABLE IF NOT EXISTS accounts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     Number INT NOT NULL UNIQUE,
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS accounts (
 );
 '''
 
-create_table_query = '''
+create_user_query = '''
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE,
@@ -27,6 +27,9 @@ CREATE TABLE IF NOT EXISTS users (
     password TEXT NOT NULL,
     account_num INT NOT NULL
 );'''
+
+cursor.execute(create_account_query)
+cursor.execute(create_user_query)
 
 cursor.execute("SELECT * FROM accounts")
 all_users = cursor.fetchall()
@@ -72,7 +75,7 @@ class Account:
 
     def check_balance(self):
 
-        cursor.execute("SELECT Balance FROM accounts WHERE Number = ?", (self.number,))
+        cursor.execute(f"SELECT Balance FROM accounts WHERE Number = {self.number}")
         print(self.number)
         all_data = cursor.fetchone()
         clean_data = int(all_data[0])
@@ -181,8 +184,14 @@ class Bank:
 
         self.number = random.randint(1000, 2000)
 
-        layout = [[sg.Text("Please provide your full name: ")],
-                [sg.InputText(key="owner")],
+        layout = [[sg.Text("Please enter your full name: ")],
+                [sg.InputText(key="name")],
+                [sg.Text("Please enter a login: ")],
+                [sg.InputText(key="login")],
+                [sg.Text("Please enter a password: ")],
+                [sg.InputText(key="password")],
+                [sg.Text("Please re-enter your password: ")],
+                [sg.InputText(key="passwordre")],
                 [sg.Button('Enter'), sg.Button('Cancel')] ]
 
         window = sg.Window('Create Account', layout)
@@ -190,42 +199,69 @@ class Bank:
         event, values = window.read()
 
         if event in (sg.WIN_CLOSED, 'Enter'):
-            self.owner = values["owner"]
+            self.name = values["name"]
+            print("print: " + self.name)
+            self.login = values["login"]
+            self.password = values["password"]
+            self.passwordre = values["passwordre"]
 
-            cursor.execute("INSERT INTO accounts (Number, Owner, Balance) VALUES (?, ?, ?)", (self.number, self.owner, "0"))
+            if self.password == self.passwordre:
 
-            conn.commit()
+                passwordh = self.password.encode('utf-8')
+                salt = bcrypt.gensalt()
+                hashed_password = bcrypt.hashpw(passwordh, salt)
+                self.password = hashed_password
+                print("hashy:" + str(self.password))
 
-            window.close()
+                cursor.execute("INSERT INTO accounts (Number, Owner, Balance) VALUES (?, ?, ?)", (self.number, self.owner, "0"))
+                cursor.execute("INSERT INTO users (name, login, password, account_num) VALUES (?, ?, ?, ?)", (self.name, self.login, self.password, self.number))        
 
-            self.account = Account(self.owner, self.number, self.username, self.password)
+                conn.commit()
 
-            layout = [[sg.Text("New account number: " + str(self.number))],
-                    [sg.Text("Account holder: " + str(self.owner))],
-                    [sg.Text("Would you like to make a deposit?")],
-                    [sg.Button('Yes'), sg.Button('No')] ]
+                window.close()
 
-            window = sg.Window('Access Account', layout)
+                self.account = Account(self.owner, self.number, self.username, self.password)
 
-            event, values = window.read()
+                layout = [[sg.Text("New account number: " + str(self.number))],
+                        [sg.Text("Account holder: " + str(self.owner))],
+                        [sg.Text("Would you like to make a deposit?")],
+                        [sg.Button('Yes'), sg.Button('No')] ]
 
-            while True:
-                if event in (sg.WIN_CLOSED, 'Yes'):
+                window = sg.Window('Access Account', layout)
+
+                event, values = window.read()
+
+                while True:
+                    if event in (sg.WIN_CLOSED, 'Yes'):
+                            window.close()
+                            self.deposit()
+                    if event in (sg.WIN_CLOSED, 'No'):
+                        
                         window.close()
-                        self.deposit()
-                if event in (sg.WIN_CLOSED, 'No'):
-                    
+                        layout = [[sg.Text("Thank you for creating an account with us.")],
+                                [sg.Button('Exit')]]
+
+                        window = sg.Window('Dani Bank - Goodbye', layout)
+
+                        event, values = window.read()
+
+                        if event in (sg.WIN_CLOSED, 'Exit'):
+                            window.close()
+                            quit()
+            else:
+                 
+                window.close()
+                layout = [[sg.Text("Passwords Do not match")],
+                        [sg.Button('Okay')]]
+
+                window = sg.Window('Create account Error', layout)
+
+                event, values = window.read()
+
+                if event in (sg.WIN_CLOSED, 'Okay'):
                     window.close()
-                    layout = [[sg.Text("Thank you for creating an account with us.")],
-                            [sg.Button('Exit')]]
+                    self.create_account()
 
-                    window = sg.Window('Dani Bank - Goodbye', layout)
-
-                    event, values = window.read()
-
-                    if event in (sg.WIN_CLOSED, 'Exit'):
-                        window.close()
-                        quit()
 
     def access_account(self):
         layout = [[sg.Text(f"Welcome back, {self.owner}!")],

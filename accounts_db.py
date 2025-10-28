@@ -3,20 +3,20 @@ import bcrypt
 
 conn = sqlite3.connect('accounts.db')
 
-user_input = 'angel'
-password = user_input.encode('utf-8')
-salt = bcrypt.gensalt()
-hashed_pass = bcrypt.hashpw(password, salt)
-print(f"Hashed password: {hashed_pass}")
+# user_input = 'angel'
+# password = user_input.encode('utf-8')
+# salt = bcrypt.gensalt()
+# hashed_pass = bcrypt.hashpw(password, salt)
+# print(f"Hashed password: {hashed_pass}")
 
 cursor = conn.cursor()
-cursor.execute("UPDATE users SET password = ? where account_num = 1", (hashed_pass,))
-cursor.execute("SELECT * FROM users")
-all_users = cursor.fetchall()
+# cursor.execute("UPDATE users SET password = ? where account_num = 1", (hashed_pass,))
+# cursor.execute("SELECT * FROM users")
+# all_users = cursor.fetchall()
 
-print("All users in the database:")
-for user in all_users:
-    print(user)
+# print("All users in the database:")
+# for user in all_users:
+#     print(user)
 
 
 # create_table_query = '''
@@ -59,6 +59,9 @@ for user in all_users:
 # print("All users in the database:")
 # for user in all_users:
 #     print(user)
+
+
+# cursor.execute("DROP TABLE accounts")
 
 conn.commit()
 
