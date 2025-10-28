@@ -75,7 +75,7 @@ class Account:
 
     def check_balance(self):
 
-        print("number " + self.number)
+        print("number " + str(self.number))
         cursor.execute(f"SELECT Balance FROM accounts WHERE Number = {self.number}")
         all_data = cursor.fetchone()
         clean_data = int(all_data[0])
@@ -182,7 +182,6 @@ class Bank:
                             
     def create_account(self):
 
-        self.number = random.randint(1000, 2000)
 
         layout = [[sg.Text("Please enter your full name: ")],
                 [sg.InputText(key="name")],
@@ -199,11 +198,13 @@ class Bank:
         event, values = window.read()
 
         if event in (sg.WIN_CLOSED, 'Enter'):
+            self.owner = values["name"]
             self.name = values["name"]
             print("print: " + self.name)
             self.login = values["login"]
             self.password = values["password"]
             self.passwordre = values["passwordre"]
+            self.number = random.randint(1000, 2000)
 
             if self.password == self.passwordre:
 
@@ -220,7 +221,7 @@ class Bank:
 
                 window.close()
 
-                self.account = Account(self.owner, self.number, self.username, self.password)
+                self.account = Account(self.number, self.owner, self.username, self.password)
 
                 layout = [[sg.Text("New account number: " + str(self.number))],
                         [sg.Text("Account holder: " + str(self.owner))],
