@@ -61,7 +61,7 @@ cursor = conn.cursor()
 #     print(user)
 
 
-# cursor.execute("DROP TABLE accounts")
+# cursor.execute("DROP TABLE users")
 
 conn.commit()
 

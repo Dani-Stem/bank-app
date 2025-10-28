@@ -143,9 +143,7 @@ class Bank:
                             cursor.execute("select number from accounts JOIN users on accounts.Number = users.account_num where users.login = ? ", (self.username,))
                             all_users = cursor.fetchone()
                             clean_data = int(all_users[0])
-                            print("clean data " + clean_data)
                             self.number = clean_data
-                            print("number " + self.number)
                             conn.commit()
                             print("password input: " + password_input)
                             print("actual password: " + str(self.password))
